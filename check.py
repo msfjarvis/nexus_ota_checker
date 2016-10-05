@@ -13,15 +13,15 @@ ota_page_url = 'https://developers.google.com/android/nexus/ota'
 pushbullet_token = os.getenv('PUSHBULLET_TOKEN')
 
 
-def get_last_version_state():
-    """Get last version seen from state file
+def get_latest_version_state():
+    """Get latest version seen from state file
     """
     if os.path.isfile(state_file):
         with open(state_file) as f:
             return f.read()
 
 
-def set_last_version_state(v):
+def set_latest_version_state(v):
     """Set version in state file
     """
     if v:
@@ -59,17 +59,17 @@ if __name__ == '__main__':
     os.makedirs(os.path.dirname(state_file), exist_ok=True)
 
     soup = bs4.BeautifulSoup(get_page_text(ota_page_url), 'html.parser')
-    last = soup.find_all('tr', attrs={'id': re.compile('^{}.*'.format(args.name))})
-    if last and isinstance(last, list):
-        tds = last[-1].findAll('td')
+    latest = soup.find_all('tr', attrs={'id': re.compile('^{}.*'.format(args.name))})
+    if latest and isinstance(latest, list):
+        tds = latest[-1].findAll('td')
         version = tds[0].string.strip()
         link = tds[1].find('a').get('href').strip()
         chksum = tds[2].string.strip()
 
-        current = get_last_version_state()
+        current = get_latest_version_state()
         if current:
             if version != current:
-                set_last_version_state(version)
+                set_latest_version_state(version)
                 message = '{n}: {v}\n\n{l}\n\n{c}'.format(n=args.name.title(), v=version, l=link, c=chksum)
                 try:
                     notify(message)
@@ -77,6 +77,6 @@ if __name__ == '__main__':
                     print('There is a new OTA, but Pushbullet failed. Here is what I know: {}'.format(message), file=sys.stderr)
                     raise
         else:
-            set_last_version_state(version)
+            set_latest_version_state(version)
     else:
         exit('No data found for codename {}. Perhaps a typo or the page layout changed too much?'.format(args.name))
