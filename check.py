@@ -3,11 +3,11 @@
 import argparse
 import os
 import re
+import sys
 
 import bs4
 import pushbullet
 import requests
-
 
 ota_page_url = 'https://developers.google.com/android/nexus/ota'
 pushbullet_token = os.getenv('PUSHBULLET_TOKEN')
@@ -70,7 +70,12 @@ if __name__ == '__main__':
         if current:
             if version != current:
                 set_last_version_state(version)
-                notify('{n}: {v}\n\n{l}\n\n{c}'.format(n=args.name.title(), v=version, l=link, c=chksum))
+                message = '{n}: {v}\n\n{l}\n\n{c}'.format(n=args.name.title(), v=version, l=link, c=chksum)
+                try:
+                    notify(message)
+                except Exception:
+                    print('There is a new OTA, but Pushbullet failed. Here is what I know: {}'.format(message), file=sys.stderr)
+                    raise
         else:
             set_last_version_state(version)
     else:
