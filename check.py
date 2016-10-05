@@ -56,6 +56,7 @@ if __name__ == '__main__':
                         help="File to store state in. Device codename is appended automatically.")
     args = parser.parse_args()
     state_file = args.file + args.name
+    os.makedirs(os.path.dirname(state_file), exist_ok=True)
 
     soup = bs4.BeautifulSoup(get_page_text(ota_page_url), 'html.parser')
     last = soup.find_all('tr', attrs={'id': re.compile('^{}.*'.format(args.name))})[-1]
