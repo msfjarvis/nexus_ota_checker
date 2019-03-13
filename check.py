@@ -9,12 +9,13 @@ import bs4
 import pushbullet
 import requests
 
-ota_page_url = 'https://developers.google.com/android/nexus/ota'
+ota_page_url = 'https://developers.google.com/android/images'
 pushbullet_token = os.getenv('PUSHBULLET_TOKEN')
 
 
 def get_latest_version_state():
-    """Get latest version seen from state file
+    """
+    Get latest version seen from state file
     """
     if os.path.isfile(state_file):
         with open(state_file) as f:
@@ -22,7 +23,8 @@ def get_latest_version_state():
 
 
 def set_latest_version_state(v):
-    """Set version in state file
+    """
+    Set version in state file
     """
     if v:
         with open(state_file, 'w') as f:
@@ -32,7 +34,8 @@ def set_latest_version_state(v):
 
 
 def get_page_text(url):
-    """Download complete HTML text for a url
+    """
+    Download complete HTML text for a url
     """
     r = requests.get(url, timeout=10)
     if r.ok:
@@ -42,7 +45,8 @@ def get_page_text(url):
 
 
 def notify(msg):
-    """Send a message via Pushbullet
+    """
+    Send a message via Pushbullet
     """
     if msg:
         pb = pushbullet.PushBullet(pushbullet_token)
