@@ -10,7 +10,7 @@ import requests
 ota_page_url = 'https://developers.google.com/android/images'
 
 
-def get_latest_version_state():
+def get_latest_version_state(state_file: str) -> str:
     """
     Get latest version seen from state file
     """
@@ -19,7 +19,7 @@ def get_latest_version_state():
             return f.read()
 
 
-def set_latest_version_state(v):
+def set_latest_version_state(v: str, state_file: str):
     """
     Set version in state file
     """
@@ -30,7 +30,7 @@ def set_latest_version_state(v):
         raise ValueError('Value of v cannot be falsey')
 
 
-def get_page_text(url):
+def get_page_text(url: str) -> str:
     """
     Download complete HTML text for a url
     """
@@ -41,7 +41,33 @@ def get_page_text(url):
         r.raise_for_status()
 
 
-if __name__ == '__main__':
+def parse(device_name: str,
+          state_file: str = path.join(path.dirname(path.abspath(__file__)), '.nexus_update_'),
+          porcelain: bool = False) -> str:
+    soup = bs4.BeautifulSoup(get_page_text(ota_page_url), 'html.parser')
+    latest = soup.find_all('tr', attrs={'id': re.compile(f'^{device_name}.*')})
+    if latest and isinstance(latest, list):
+        tds = latest[-1].findAll('td')
+        version = tds[0].string.strip()
+        link = tds[1].find('a').get('href').strip()
+        chksum = tds[2].string.strip()
+        if porcelain:
+            message = f'{device_name},{version},{link},{chksum}'
+        else:
+            message = f'{device_name}: {version}\n\n{link}\n\n{chksum}'
+
+        current = get_latest_version_state(state_file)
+        if current:
+            if version != current:
+                set_latest_version_state(version, state_file)
+        else:
+            set_latest_version_state(version, state_file)
+        return message
+    else:
+        exit(f'No data found for codename {device_name}. Perhaps a typo or the page layout changed too much?')
+
+
+def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-n', '--name', required=True, help="Device codename")
     parser.add_argument('-f', '--file', default=path.join(path.dirname(path.abspath(__file__)), '.nexus_update_'),
@@ -51,25 +77,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     state_file = args.file + args.name
     makedirs(path.dirname(state_file), exist_ok=True)
+    print(parse(device_name=args.name, state_file=state_file, porcelain=args.porcelain))
 
-    soup = bs4.BeautifulSoup(get_page_text(ota_page_url), 'html.parser')
-    latest = soup.find_all('tr', attrs={'id': re.compile(f'^{args.name}.*')})
-    if latest and isinstance(latest, list):
-        tds = latest[-1].findAll('td')
-        version = tds[0].string.strip()
-        link = tds[1].find('a').get('href').strip()
-        chksum = tds[2].string.strip()
-        if args.porcelain:
-            message = f'{args.name},{version},{link},{chksum}'
-        else:
-            message = f'{args.name}: {version}\n\n{link}\n\n{chksum}'
 
-        current = get_latest_version_state()
-        if current:
-            if version != current:
-                set_latest_version_state(version)
-        else:
-            set_latest_version_state(version)
-        print(message)
-    else:
-        exit(f'No data found for codename {args.name}. Perhaps a typo or the page layout changed too much?')
+if __name__ == '__main__':
+    main()
