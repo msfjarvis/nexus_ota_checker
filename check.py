@@ -47,6 +47,8 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--name', required=True, help="Device codename")
     parser.add_argument('-f', '--file', default=path.join(path.dirname(path.abspath(__file__)), '.nexus_update_'),
                         help="File to store state in. Device codename is appended automatically.")
+    parser.add_argument('-p', '--porcelain', default=False, action="store_true",
+                        help="Print machine readable output for scripts to parse")
     args = parser.parse_args()
     state_file = args.file + args.name
     makedirs(path.dirname(state_file), exist_ok=True)
@@ -58,7 +60,10 @@ if __name__ == '__main__':
         version = tds[0].string.strip()
         link = tds[1].find('a').get('href').strip()
         chksum = tds[2].string.strip()
-        message = '{n}: {v}\n\n{l}\n\n{c}'.format(n=args.name.title(), v=version, l=link, c=chksum)
+        if args.porcelain:
+            message = '{n},{v},{l},{c}'.format(n=args.name, v=version, l=link, c=chksum)
+        else:
+            message = '{n}: {v}\n\n{l}\n\n{c}'.format(n=args.name, v=version, l=link, c=chksum)
 
         current = get_latest_version_state()
         if current:
