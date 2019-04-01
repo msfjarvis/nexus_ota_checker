@@ -1,6 +1,6 @@
 import argparse
 import hashlib
-from os import path, makedirs, rename, remove, removedirs
+from os import listdir, path, makedirs, rename, remove, removedirs
 from shutil import move, rmtree
 from zipfile import PyZipFile
 
@@ -88,8 +88,9 @@ def main():
     otapackage.download()
     otapackage.extract_files()
     final_dir = path.join(args.output, otapackage.get_output_dir().split("/")[-1])
-    if path.exists(final_dir):
-        rmtree(final_dir)
+    for directory in listdir(args.output):
+        if directory.startswith(args.name):
+            rmtree(path.join(args.output, directory))
     move(otapackage.get_output_dir(), final_dir)
     if args.clean:
         otapackage.cleanup()
