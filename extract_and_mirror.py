@@ -1,7 +1,7 @@
 import argparse
 import hashlib
 import re
-from os import listdir, path, makedirs, rename, remove, removedirs
+from os import listdir, path, makedirs, rename, remove
 from shutil import move, rmtree
 from zipfile import PyZipFile
 
@@ -49,7 +49,7 @@ class OtaPackage:
     def extract_files(self):
         print("Beginning extraction...")
         if path.exists(self.get_output_dir()):
-            removedirs(self.get_output_dir())
+            rmtree(self.get_output_dir())
         zf = PyZipFile(self.dest)
         for file in zf.filelist:
             filename: str = file.filename
