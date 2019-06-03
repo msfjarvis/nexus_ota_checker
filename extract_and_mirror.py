@@ -1,7 +1,8 @@
 import argparse
 import hashlib
 import re
-from os import listdir, path, makedirs, rename, remove
+from os import listdir, makedirs, rename, remove
+from os.path import exists, join, dirname, abspath, isfile
 from shutil import move, rmtree
 from zipfile import PyZipFile
 
@@ -13,7 +14,7 @@ ALL_DEVICES = ['sailfish', 'marlin', 'taimen', 'walleye', 'crosshatch', 'bluelin
 
 
 def sha256_hash(file_path: str) -> str:
-    if not path.isfile(file_path):
+    if not isfile(file_path):
         raise Exception(f"{file_path} is not a file!")
     hash_256 = hashlib.sha256()
     with open(file_path, "rb") as full_file:
@@ -28,13 +29,13 @@ class OtaPackage:
         self.package_url = url
         self.checksum = checksum
         self.release_tag = release_tag
-        self.dest_dir = path.join(path.dirname(path.abspath(__file__)), self.codename)
-        self.dest = path.join(self.dest_dir, self.package_url.split('/')[-1])
+        self.dest_dir = join(dirname(abspath(__file__)), self.codename)
+        self.dest = join(self.dest_dir, self.package_url.split('/')[-1])
 
     def download(self):
-        if not path.exists(self.dest_dir):
+        if not exists(self.dest_dir):
             makedirs(self.dest_dir)
-        elif path.exists(self.dest):
+        elif exists(self.dest):
             checksum = sha256_hash(self.dest)
             if checksum == self.checksum:
                 print("Package already exists!")
@@ -48,7 +49,7 @@ class OtaPackage:
 
     def extract_files(self):
         print("Beginning extraction...")
-        if path.exists(self.get_output_dir()):
+        if exists(self.get_output_dir()):
             rmtree(self.get_output_dir())
         zf = PyZipFile(self.dest)
         for file in zf.filelist:
@@ -64,14 +65,14 @@ class OtaPackage:
                     if img.filename in images_to_extract:
                         self.__report_extract(img.filename)
                         img_zf.extract(img.filename)
-                        rename(img.filename, path.join(f"{self.codename}-{self.release_tag}", img.filename))
+                        rename(img.filename, join(f"{self.codename}-{self.release_tag}", img.filename))
                 remove(filename)
 
     def cleanup(self):
         rmtree(self.dest_dir)
 
     def get_output_dir(self):
-        return path.join(path.dirname(path.abspath(__file__)), f"{self.codename}-{self.release_tag}")
+        return join(dirname(abspath(__file__)), f"{self.codename}-{self.release_tag}")
 
 
 def process_packages(args: argparse.Namespace):
@@ -92,10 +93,10 @@ def process_packages(args: argparse.Namespace):
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
         otapackage.download()
         otapackage.extract_files()
-        final_dir = path.join(args.output, otapackage.get_output_dir().split("/")[-1])
+        final_dir = join(args.output, otapackage.get_output_dir().split("/")[-1])
         for directory in listdir(args.output):
             if directory.startswith(device):
-                rmtree(path.join(args.output, directory))
+                rmtree(join(args.output, directory))
         move(otapackage.get_output_dir(), final_dir)
         if args.clean:
             otapackage.cleanup()
