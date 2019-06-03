@@ -29,7 +29,7 @@ class OtaPackage:
         self.package_url = url
         self.checksum = checksum
         self.release_tag = release_tag
-        self.dest_dir = join(dirname(abspath(__file__)), self.codename)
+        self.dest_dir = join(dirname(abspath(__file__)), "packages", self.codename)
         self.dest = join(self.dest_dir, self.package_url.split('/')[-1])
 
     def download(self):
