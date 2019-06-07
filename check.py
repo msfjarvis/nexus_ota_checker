@@ -43,12 +43,15 @@ def get_page_text(url: str) -> str:
 
 def parse(device_name: str,
           state_file: str = path.join(path.dirname(path.abspath(__file__)), '.nexus_update_'),
-          porcelain: bool = False) -> str:
+          porcelain: bool = False,
+          idx_override: int = -1) -> str:
     soup = bs4.BeautifulSoup(get_page_text(ota_page_url), 'html.parser')
     latest = soup.find_all('tr', attrs={'id': re.compile(f'^{device_name}.*')})
     if latest and isinstance(latest, list):
-        tds = latest[-1].findAll('td')
+        tds = latest[idx_override].findAll('td')
         version = tds[0].string.strip()
+        if 'Verizon' in version:
+            return parse(device_name, state_file, porcelain, -2)
         link = tds[1].find('a').get('href').strip()
         chksum = tds[2].string.strip()
         if porcelain:
