@@ -3,3 +3,4 @@
 /.nexus_update_*
 /__pycache__/
 /packages/
+/cache/

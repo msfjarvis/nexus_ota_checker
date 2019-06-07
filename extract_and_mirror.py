@@ -1,8 +1,8 @@
 import argparse
 import hashlib
 import re
-from os import listdir, makedirs, rename, remove
-from os.path import exists, join, dirname, abspath, isfile
+from os import listdir, makedirs, rename, remove, chdir
+from os.path import exists, join, dirname, isfile, realpath
 from shutil import move, rmtree
 from zipfile import PyZipFile
 
@@ -24,13 +24,17 @@ def sha256_hash(file_path: str) -> str:
 
 
 class OtaPackage:
+    CACHE_DIR = join(dirname(realpath(__file__)), "cache")
+
     def __init__(self, codename: str, url: str, checksum: str, release_tag: str):
         self.codename = codename
         self.package_url = url
         self.checksum = checksum
         self.release_tag = release_tag
-        self.dest_dir = join(dirname(abspath(__file__)), "packages", self.codename)
+        self.dest_dir = join(dirname(realpath(__file__)), "packages", self.codename)
         self.dest = join(self.dest_dir, self.package_url.split('/')[-1])
+        if not exists(self.CACHE_DIR):
+            makedirs(self.CACHE_DIR)
 
     def download(self):
         if not exists(self.dest_dir):
@@ -51,6 +55,7 @@ class OtaPackage:
         print("Beginning extraction...")
         if exists(self.get_output_dir()):
             rmtree(self.get_output_dir())
+
         zf = PyZipFile(self.dest)
         for file in zf.filelist:
             filename: str = file.filename
@@ -65,14 +70,14 @@ class OtaPackage:
                     if img.filename in images_to_extract:
                         self.__report_extract(img.filename)
                         img_zf.extract(img.filename)
-                        rename(img.filename, join(f"{self.codename}-{self.release_tag}", img.filename))
+                        rename(join(self.CACHE_DIR, img.filename), join(self.get_output_dir(), img.filename))
                 remove(filename)
 
     def cleanup(self):
         rmtree(self.dest_dir)
 
     def get_output_dir(self):
-        return join(dirname(abspath(__file__)), f"{self.codename}-{self.release_tag}")
+        return join(dirname(realpath(__file__)), f"{self.codename}-{self.release_tag}")
 
 
 def process_packages(args: argparse.Namespace):
@@ -92,7 +97,9 @@ def process_packages(args: argparse.Namespace):
         checksum = raw_data[3]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
         otapackage.download()
+        chdir(otapackage.CACHE_DIR)
         otapackage.extract_files()
+        chdir(dirname(realpath(__file__)))
         final_dir = join(args.output, otapackage.get_output_dir().split("/")[-1])
         for directory in listdir(args.output):
             if directory.startswith(device):
