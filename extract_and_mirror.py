@@ -82,7 +82,7 @@ class OtaPackage:
 
 def process_packages(args: argparse.Namespace):
     devices = []
-    regexp = re.compile('[A-Z0-9.]+\d{6}.\d{3}')
+    regexp = re.compile('[A-Z0-9.]+d{6}.d{3}')
     if not args.name:
         devices = ALL_DEVICES
     else:
