@@ -113,6 +113,9 @@ def process_packages(args: argparse.Namespace):
         package_url = raw_data[1]
         checksum = raw_data[2]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
+        if args.dry_run:
+            print(f"device={device_name},release_tag={release_tag},package_url={package_url}")
+            continue
         otapackage.download()
         chdir(otapackage.CACHE_DIR)
         otapackage.extract_files()
@@ -136,6 +139,12 @@ def main():
     )
     parser.add_argument(
         "-c", "--clean", action="store_true", help="Remove downloaded images once done"
+    )
+    parser.add_argument(
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="Perform a trial run with no changes made",
     )
     process_packages(parser.parse_args())
 
