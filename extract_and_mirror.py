@@ -10,7 +10,16 @@ from pySmartDL import SmartDL
 
 from check import parse
 
-ALL_DEVICES = ['sailfish', 'marlin', 'taimen', 'walleye', 'crosshatch', 'blueline', 'sargo', 'bonito']
+ALL_DEVICES = [
+    "sailfish",
+    "marlin",
+    "taimen",
+    "walleye",
+    "crosshatch",
+    "blueline",
+    "sargo",
+    "bonito",
+]
 
 
 def sha256_hash(file_path: str) -> str:
@@ -32,7 +41,7 @@ class OtaPackage:
         self.checksum = checksum
         self.release_tag = release_tag
         self.dest_dir = join(dirname(realpath(__file__)), "packages", self.codename)
-        self.dest = join(self.dest_dir, self.package_url.split('/')[-1])
+        self.dest = join(self.dest_dir, self.package_url.split("/")[-1])
         if not exists(self.CACHE_DIR):
             makedirs(self.CACHE_DIR)
 
@@ -59,18 +68,27 @@ class OtaPackage:
         zf = PyZipFile(self.dest)
         for file in zf.filelist:
             filename: str = file.filename
-            if filename.endswith('img'):  # bootloader/radio, directly extract and copy
+            if filename.endswith("img"):  # bootloader/radio, directly extract and copy
                 self.__report_extract(filename)
                 zf.extract(filename)
-            elif filename.endswith('zip'):  # the meaty potatoes of everything
+            elif filename.endswith("zip"):  # the meaty potatoes of everything
                 zf.extract(filename)
                 img_zf = PyZipFile(filename)
-                images_to_extract = ('boot.img', 'dtbo.img', 'modem.img', 'vbmeta.img', 'vendor.img')
+                images_to_extract = (
+                    "boot.img",
+                    "dtbo.img",
+                    "modem.img",
+                    "vbmeta.img",
+                    "vendor.img",
+                )
                 for img in img_zf.filelist:
                     if img.filename in images_to_extract:
                         self.__report_extract(img.filename)
                         img_zf.extract(img.filename)
-                        rename(join(self.CACHE_DIR, img.filename), join(self.get_output_dir(), img.filename))
+                        rename(
+                            join(self.CACHE_DIR, img.filename),
+                            join(self.get_output_dir(), img.filename),
+                        )
                 remove(filename)
 
     def cleanup(self):
@@ -82,7 +100,7 @@ class OtaPackage:
 
 def process_packages(args: argparse.Namespace):
     devices = []
-    regexp = re.compile('[A-Z0-9.]+d{6}.d{3}')
+    regexp = re.compile("[A-Z0-9.]+d{6}.d{3}")
     if not args.name:
         devices = ALL_DEVICES
     else:
@@ -110,12 +128,18 @@ def process_packages(args: argparse.Namespace):
 
 
 def main():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-n', '--name', required=False, help="Device codename")
-    parser.add_argument('-o', '--output', required=True, help="Output directory for extracted images")
-    parser.add_argument('-c', '--clean', action="store_true", help="Remove downloaded images once done")
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("-n", "--name", required=False, help="Device codename")
+    parser.add_argument(
+        "-o", "--output", required=True, help="Output directory for extracted images"
+    )
+    parser.add_argument(
+        "-c", "--clean", action="store_true", help="Remove downloaded images once done"
+    )
     process_packages(parser.parse_args())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
