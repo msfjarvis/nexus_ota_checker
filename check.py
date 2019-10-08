@@ -57,7 +57,7 @@ def parse(
         link = tds[1].find("a").get("href").strip()
         chksum = tds[2].string.strip()
         if porcelain:
-            message = f"{device_name}|{version}|{link}|{chksum}"
+            message = f"{device_name}|{link}|{chksum}"
         else:
             message = f"{device_name}: {version}\n\n{link}\n\n{chksum}"
 

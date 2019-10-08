@@ -109,9 +109,9 @@ def process_packages(args: argparse.Namespace):
     for device in devices:
         raw_data = parse(device, porcelain=True).split("|")
         device_name = raw_data[0]
-        release_tag = regexp.search(raw_data[2]).group(1)
-        package_url = raw_data[2]
-        checksum = raw_data[3]
+        release_tag = regexp.search(raw_data[1]).group(1)
+        package_url = raw_data[1]
+        checksum = raw_data[2]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
         otapackage.download()
         chdir(otapackage.CACHE_DIR)
