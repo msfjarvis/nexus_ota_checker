@@ -92,7 +92,7 @@ def process_packages(args: argparse.Namespace):
         raw_data = parse(device, porcelain=True).split("|")
         device_name = raw_data[0]
         # This is rather terrible but I'm gonna go with it since atleast some regex is involved
-        release_tag = regexp.search(raw_data[1]).group(0).lower()
+        release_tag = raw_data[2].split("/")[-1].split("-")[1]
         package_url = raw_data[2]
         checksum = raw_data[3]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
