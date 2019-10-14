@@ -2,7 +2,7 @@
 
 import argparse
 import re
-from os import makedirs, path
+from os import makedirs, path, rename
 
 import bs4
 import requests
@@ -14,6 +14,9 @@ def get_latest_version_state(state_file: str) -> str:
     """
     Get latest version seen from state file
     """
+    prev_state_file = state_file.replace("pixel", "nexus")
+    if path.isfile(prev_state_file):
+        rename(prev_state_file, state_file)
     if path.isfile(state_file):
         with open(state_file) as f:
             return f.read()
@@ -43,7 +46,7 @@ def get_page_text(url: str) -> str:
 
 def parse(
     device_name: str,
-    state_file: str = path.join(path.dirname(path.abspath(__file__)), ".nexus_update_"),
+    state_file: str = path.join(path.dirname(path.abspath(__file__)), ".pixel_update"),
     porcelain: bool = False,
     idx_override: int = -1,
 ) -> str:
@@ -82,7 +85,7 @@ def main():
     parser.add_argument(
         "-f",
         "--file",
-        default=path.join(path.dirname(path.abspath(__file__)), ".nexus_update_"),
+        default=path.join(path.dirname(path.abspath(__file__)), ".pixel_update_"),
         help="File to store state in. Device codename is appended automatically.",
     )
     parser.add_argument(
