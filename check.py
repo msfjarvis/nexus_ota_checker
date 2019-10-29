@@ -2,7 +2,7 @@
 
 import argparse
 import re
-from os import makedirs, path, rename
+from os import makedirs, path, remove
 
 import bs4
 import requests
@@ -15,8 +15,9 @@ def get_latest_version_state(state_file: str) -> str:
     Get latest version seen from state file
     """
     prev_state_file = state_file.replace("pixel", "nexus")
-    if path.isfile(prev_state_file):
-        rename(prev_state_file, state_file)
+    with state_file.replace("pixel", "nexus") as f:
+        if path.isfile(f):
+            remove(f)
     if path.isfile(state_file):
         with open(state_file) as f:
             return f.read()
