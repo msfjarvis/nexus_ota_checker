@@ -18,9 +18,7 @@ ALL_DEVICES = [
     "sargo",
     "bonito",
     "taimen",
-    "walleye",
-    "sailfish",
-    "marlin"
+    "walleye"
 ]
 
 
