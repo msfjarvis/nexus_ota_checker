@@ -18,7 +18,7 @@ ALL_DEVICES = [
     "sargo",
     "bonito",
     "taimen",
-    "walleye"
+    "walleye",
 ]
 
 
@@ -114,7 +114,9 @@ def process_packages(args: argparse.Namespace):
         checksum = raw_data[2]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
         if args.dry_run:
-            print(f"device={device_name},release_tag={release_tag},package_url={package_url}")
+            print(
+                f"device={device_name},release_tag={release_tag},package_url={package_url}"
+            )
             continue
         otapackage.download()
         chdir(otapackage.CACHE_DIR)
