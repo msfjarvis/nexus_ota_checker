@@ -7,7 +7,7 @@ from os import makedirs, path, remove
 import bs4
 import requests
 
-ota_page_url = "https://developers.google.com/android/images"
+OTA_PAGE_URL = "https://developers.google.com/android/images"
 
 
 def get_latest_version_state(state_file: str) -> str:
@@ -51,7 +51,7 @@ def parse(
     porcelain: bool = False,
     idx_override: int = -1,
 ) -> str:
-    soup = bs4.BeautifulSoup(get_page_text(ota_page_url), "html.parser")
+    soup = bs4.BeautifulSoup(get_page_text(OTA_PAGE_URL), "html.parser")
     latest = soup.find_all("tr", attrs={"id": re.compile(f"^{device_name}.*")})
     if latest and isinstance(latest, list):
         tds = latest[idx_override].findAll("td")
