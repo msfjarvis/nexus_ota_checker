@@ -14,10 +14,6 @@ def get_latest_version_state(state_file: str) -> str:
     """
     Get latest version seen from state file
     """
-    prev_state_file = state_file.replace("pixel", "nexus")
-    with state_file.replace("pixel", "nexus") as f:
-        if path.isfile(f):
-            remove(f)
     if path.isfile(state_file):
         with open(state_file) as f:
             return f.read()
