@@ -2,7 +2,7 @@ import argparse
 import hashlib
 import re
 from os import listdir, makedirs, rename, remove, chdir
-from os.path import exists, join, dirname, isfile, realpath
+from os.path import abspath, exists, join, dirname, isfile, realpath
 from shutil import move, rmtree
 from zipfile import PyZipFile
 
@@ -107,7 +107,7 @@ def process_packages(args: argparse.Namespace):
         devices.append(args.name)
     makedirs(args.output, exist_ok=True)
     for device in devices:
-        raw_data = parse(device, porcelain=True).split("|")
+        raw_data = parse(device, state_file=join(dirname(abspath(__file__)), f".pixel_update_{device}"), porcelain=True).split("|")
         device_name = raw_data[0]
         release_tag = regexp.search(raw_data[1]).group(1)
         package_url = raw_data[1]

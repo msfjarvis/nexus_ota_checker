@@ -43,7 +43,7 @@ def get_page_text(url: str) -> str:
 
 def parse(
     device_name: str,
-    state_file: str = path.join(path.dirname(path.abspath(__file__)), ".pixel_update"),
+    state_file: str,
     porcelain: bool = False,
     idx_override: int = -1,
 ) -> str:
