@@ -42,10 +42,7 @@ def get_page_text(url: str) -> str:
 
 
 def parse(
-    device_name: str,
-    state_file: str,
-    porcelain: bool = False,
-    idx_override: int = -1,
+    device_name: str, state_file: str, porcelain: bool = False, idx_override: int = -1,
 ) -> str:
     soup = bs4.BeautifulSoup(get_page_text(OTA_PAGE_URL), "html.parser")
     latest = soup.find_all("tr", attrs={"id": re.compile(f"^{device_name}.*")})
