@@ -40,7 +40,7 @@ class OtaPackage:
         self.package_url = url
         self.checksum = checksum
         self.release_tag = release_tag
-        self.dest_dir = join(dirname(realpath(__file__)), "packages", self.codename)
+        self.dest_dir = join(CACHE_DIR, self.codename)
         self.dest = join(self.dest_dir, self.package_url.split("/")[-1])
         if not exists(self.CACHE_DIR):
             makedirs(self.CACHE_DIR)
