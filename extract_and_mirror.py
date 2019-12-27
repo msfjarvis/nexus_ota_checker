@@ -40,7 +40,7 @@ class OtaPackage:
         self.package_url = url
         self.checksum = checksum
         self.release_tag = release_tag
-        self.dest_dir = join(CACHE_DIR, self.codename)
+        self.dest_dir = join(self.CACHE_DIR, self.codename)
         self.dest = join(self.dest_dir, self.package_url.split("/")[-1])
         if not exists(self.CACHE_DIR):
             makedirs(self.CACHE_DIR)
@@ -123,7 +123,7 @@ def process_packages(args: argparse.Namespace):
             )
             continue
         otapackage.download()
-        chdir(otapackage.CACHE_DIR)
+        chdir(OtaPackage.CACHE_DIR)
         otapackage.extract_files()
         chdir(dirname(realpath(__file__)))
         final_dir = join(args.output, otapackage.get_output_dir().split("/")[-1])
