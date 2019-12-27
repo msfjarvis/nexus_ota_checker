@@ -2,7 +2,7 @@
 
 import argparse
 import re
-from os import makedirs, path, remove
+from os import makedirs, path
 
 import bs4
 import requests
@@ -53,8 +53,9 @@ def parse(
             return parse(device_name, state_file, porcelain, -2)
         link = tds[1].find("a").get("href").strip()
         chksum = tds[2].string.strip()
+        release_tag = re.compile(".*-(.*)-factory.*").search(link).group(1)
         if porcelain:
-            message = f"{device_name}|{link}|{chksum}"
+            message = f"{device_name}|{release_tag}|{link}|{chksum}"
         else:
             message = f"{device_name}: {version}\n\n{link}\n\n{chksum}"
 

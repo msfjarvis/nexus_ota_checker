@@ -1,6 +1,5 @@
 import argparse
 import hashlib
-import re
 from os import listdir, makedirs, rename, remove, chdir
 from os.path import abspath, exists, join, dirname, isfile, realpath
 from shutil import move, rmtree
@@ -100,7 +99,6 @@ class OtaPackage:
 
 def process_packages(args: argparse.Namespace):
     devices = []
-    regexp = re.compile(".*-(.*)-factory.*")
     if not args.name:
         devices = ALL_DEVICES
     else:
@@ -113,9 +111,9 @@ def process_packages(args: argparse.Namespace):
             porcelain=True,
         ).split("|")
         device_name = raw_data[0]
-        release_tag = regexp.search(raw_data[1]).group(1)
-        package_url = raw_data[1]
-        checksum = raw_data[2]
+        release_tag = raw_data[1]
+        package_url = raw_data[2]
+        checksum = raw_data[3]
         otapackage = OtaPackage(device_name, package_url, checksum, release_tag)
         if args.dry_run:
             print(
