@@ -6,23 +6,29 @@ from os import makedirs, path
 
 import bs4
 import requests
+from typing import Optional
 
 OTA_PAGE_URL = "https://developers.google.com/android/images"
 
 
-def get_latest_version_state(state_file: str) -> str:
+def get_latest_version_state(state_file: Optional[str]) -> Optional[str]:
     """
     Get latest version seen from state file
     """
+    if not state_file:
+        return None
     if path.isfile(state_file):
         with open(state_file) as f:
             return f.read()
+    return None
 
 
-def set_latest_version_state(v: str, state_file: str):
+def set_latest_version_state(v: str, state_file: Optional[str]) -> int:
     """
     Set version in state file
     """
+    if not state_file:
+        return 0
     if v:
         with open(state_file, "w") as f:
             return f.write(v)
@@ -42,9 +48,15 @@ def get_page_text(url: str) -> str:
 
 
 def parse(
-    device_name: str, state_file: str, porcelain: bool = False, idx_override: int = -1,
+    device_name: str,
+    page_text: str = "",
+    state_file: Optional[str] = None,
+    porcelain: bool = False,
+    idx_override: int = -1,
 ) -> str:
-    soup = bs4.BeautifulSoup(get_page_text(OTA_PAGE_URL), "html.parser")
+    if page_text == "":
+        page_text = get_page_text(OTA_PAGE_URL)
+    soup = bs4.BeautifulSoup(page_text, "html.parser")
     latest = soup.find_all("tr", attrs={"id": re.compile(f"^{device_name}.*")})
     if latest and isinstance(latest, list):
         tds = latest[idx_override].findAll("td")
