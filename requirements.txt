@@ -13,5 +13,5 @@ regex==2020.1.8
 requests==2.22.0
 soupsieve==1.9.5
 toml==0.10.0
-typed-ast==1.4.0
+typed-ast==1.4.1
 urllib3==1.25.7
