@@ -40,7 +40,8 @@ def get_page_text(url: str) -> str:
     """
     Download complete HTML text for a url
     """
-    r = requests.get(url, timeout=10)
+    cookies = {"devsite_wall_acks": "nexus-image-tos"}
+    r = requests.get(url, timeout=10, cookies=cookies)
     if r.ok:
         return r.text
     else:
