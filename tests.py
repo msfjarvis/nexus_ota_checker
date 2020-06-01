@@ -9,13 +9,13 @@ class Bs4Test(unittest.TestCase):
         data = parse("walleye", page_text=page_text, porcelain=True).split("|")
         self.assertEqual(4, len(data))
         self.assertEqual("walleye", data[0])
-        self.assertEqual("qq1a.191205.008", data[1])
+        self.assertEqual("qq2a.200501.001.b3", data[1])
         self.assertEqual(
-            "https://dl.google.com/dl/android/aosp/walleye-qq1a.191205.008-factory-fcc4bb81.zip",
+            "https://dl.google.com/dl/android/aosp/walleye-qq2a.200501.001.b3-factory-4dee41ec.zip",
             data[2],
         )
         self.assertEqual(
-            "fcc4bb811eed22a4cecf3b3746ed5619ba2d25aca7a4fb6b427ae8011d68ce61", data[3]
+            "4dee41ec5c26276680723fd0c1d04460f5e8b30265360e824c6d6f29e4e1eb40", data[3]
         )
 
 
