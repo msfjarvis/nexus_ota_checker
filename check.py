@@ -62,8 +62,8 @@ def parse(
     if latest and isinstance(latest, list):
         tds = latest[idx_override].findAll("td")
         version = tds[0].string.strip()
-        link = tds[1].find("a").get("href").strip()
-        chksum = tds[2].string.strip()
+        link = tds[2].find("a").get("href").strip()
+        chksum = tds[3].string.strip()
         release_tag = re.compile(".*-(.*)-factory.*").search(link).group(1)
         if release_tag.count(".") >= 3:
             return parse(device_name, page_text, state_file, porcelain, -2)
