@@ -1,4 +1,4 @@
-name: Run tests and validate codestyle
+name: Run tests on updated data
 on:
   schedule:
     - cron: '0 0 * * 6'
@@ -11,14 +11,13 @@ jobs:
         python-version: [ '3.7', '3.8' ]
     name: Test with Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Setup python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
       - run: |
             ./update.sh
             pip install -r requirements.txt
-            black --check .
             python tests.py
