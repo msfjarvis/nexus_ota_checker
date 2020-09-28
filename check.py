@@ -2,11 +2,12 @@
 
 import argparse
 import re
+import sys
 from os import makedirs, path
 
+from typing import Optional
 import bs4
 import requests
-from typing import Optional
 
 OTA_PAGE_URL = "https://developers.google.com/android/images"
 
@@ -18,34 +19,32 @@ def get_latest_version_state(state_file: Optional[str]) -> Optional[str]:
     if not state_file:
         return None
     if path.isfile(state_file):
-        with open(state_file) as f:
-            return f.read()
+        with open(state_file) as file:
+            return file.read()
     return None
 
 
-def set_latest_version_state(v: str, state_file: Optional[str]) -> int:
+def set_latest_version_state(version: str, state_file: Optional[str]) -> Optional[int]:
     """
     Set version in state file
     """
     if not state_file:
         return 0
-    if v:
-        with open(state_file, "w") as f:
-            return f.write(v)
-    else:
-        raise ValueError("Value of v cannot be falsey")
+    if version:
+        with open(state_file, "w") as file:
+            return file.write(version)
+    raise ValueError("Value of version cannot be falsey")
 
 
-def get_page_text(url: str) -> str:
+def get_page_text(url: str) -> Optional[str]:
     """
     Download complete HTML text for a url
     """
     cookies = {"devsite_wall_acks": "nexus-image-tos"}
-    r = requests.get(url, timeout=10, cookies=cookies)
-    if r.ok:
-        return r.text
-    else:
-        r.raise_for_status()
+    request = requests.get(url, timeout=10, cookies=cookies)
+    if request.ok:
+        return request.text
+    request.raise_for_status()
 
 
 def parse(
@@ -54,7 +53,7 @@ def parse(
     state_file: Optional[str] = None,
     porcelain: bool = False,
     idx_override: int = -1,
-) -> str:
+) -> Optional[str]:
     if page_text == "":
         page_text = get_page_text(OTA_PAGE_URL)
     soup = bs4.BeautifulSoup(page_text, "html.parser")
@@ -80,9 +79,10 @@ def parse(
             set_latest_version_state(version, state_file)
         return message
     else:
-        exit(
+        sys.exit(
             f"No data found for codename {device_name}. Perhaps a typo or the page layout changed too much?"
         )
+        return None
 
 
 def main():

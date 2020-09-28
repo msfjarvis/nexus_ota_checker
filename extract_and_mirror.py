@@ -64,14 +64,14 @@ class OtaPackage:
         if exists(self.get_output_dir()):
             rmtree(self.get_output_dir())
 
-        zf = PyZipFile(self.dest)
-        for file in zf.filelist:
+        zip_file = PyZipFile(self.dest)
+        for file in zip_file.filelist:
             filename: str = file.filename
             if filename.endswith("img"):  # bootloader/radio, directly extract and copy
                 self.__report_extract(filename)
-                zf.extract(filename)
+                zip_file.extract(filename)
             elif filename.endswith("zip"):  # the meaty potatoes of everything
-                zf.extract(filename)
+                zip_file.extract(filename)
                 img_zf = PyZipFile(filename)
                 images_to_extract = (
                     "boot.img",
