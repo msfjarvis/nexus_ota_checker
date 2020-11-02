@@ -12,6 +12,9 @@ from check import parse
 ALL_DEVICES = [
     "coral",
     "flame",
+    "sunfish",
+    "redfin",
+    "bramble",
     "crosshatch",
     "blueline",
     "sargo",
