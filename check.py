@@ -65,7 +65,11 @@ def parse(
         chksum = tds[3].string.strip()
         release_tag = re.compile(".*-(.*)-factory.*").search(link).group(1)
         if release_tag.count(".") >= 3:
-            return parse(device_name, page_text, state_file, porcelain, -2)
+            # As time progresses, the number of country/carrier specific bullshit is on the rise
+            # What was one extra variant from Verizon now has 3 more. Hence, we simply keep decrementing
+            # until we find a suitable version.
+            new_idx = idx_override - 1
+            return parse(device_name, page_text, state_file, porcelain, new_idx)
         if porcelain:
             message = f"{device_name}|{release_tag}|{link}|{chksum}"
         else:
