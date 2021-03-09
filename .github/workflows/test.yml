@@ -7,16 +7,23 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8' ]
+        python-version: [ '3.8' ]
     name: Test with Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup python
-        uses: actions/setup-python@v2
+      - name: Checkout repository
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - name: Setup Python
+        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: |
-            pip install -r requirements.txt
-            black --check .
-            python tests.py
+
+      - name: Setup Poetry
+        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+
+      - name: Run tests
+        run: |
+            poetry install
+            poetry run black --check .
+            poetry run ./tests.py

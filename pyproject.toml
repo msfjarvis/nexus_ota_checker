@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "pixel_ota_checker"
+version = "1.0.0"
+description = "Tooling used for my mirror of Pixel factory images"
+authors = ["Harsh Shandilya <me@msfjarvis.dev>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+appdirs = "1.4.4"
+attrs = "20.3.0"
+beautifulsoup4 = "4.9.3"
+black = "20.8b1"
+certifi = "2020.12.5"
+chardet = "4.0.0"
+click = "7.1.2"
+idna = "2.10"
+pathspec = "0.8.1"
+pySmartDL = "1.3.4"
+regex = "2020.11.13"
+requests = "2.25.1"
+soupsieve = "2.2"
+toml = "0.10.2"
+typed-ast = "1.4.2"
+urllib3 = "1.26.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
