@@ -22,7 +22,7 @@ requests = "2.26.0"
 soupsieve = "2.2.1"
 toml = "0.10.2"
 typed-ast = "1.4.3"
-urllib3 = "1.26.6"
+urllib3 = "1.26.7"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^21.9b0", allow-prereleases = true}
