@@ -64,7 +64,7 @@ def parse(
         link = tds[2].find("a").get("href").strip()
         chksum = tds[3].string.strip()
         release_tag = re.compile(".*-(.*)-factory.*").search(link).group(1)
-        if release_tag.count(".") >= 3:
+        if version.count(",") > 1:
             # As time progresses, the number of country/carrier specific bullshit is on the rise
             # What was one extra variant from Verizon now has 3 more. Hence, we simply keep decrementing
             # until we find a suitable version.
