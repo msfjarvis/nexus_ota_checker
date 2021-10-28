@@ -12,17 +12,18 @@ from pySmartDL import SmartDL
 from check import parse
 
 ALL_DEVICES = [
-    "coral",
-    "flame",
-    "sunfish",
+    "oriole",
+    "raven",
+    "barbet",
     "redfin",
     "bramble",
+    "sunfish",
+    "coral",
+    "flame",
+    "bonito",
+    "sargo",
     "crosshatch",
     "blueline",
-    "sargo",
-    "bonito",
-    "taimen",
-    "walleye",
 ]
 
 
